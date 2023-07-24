@@ -1,5 +1,5 @@
 # ChEMBL-Data-Curator
-1. This tool processes and curate the .csv data downloaded from ChEMBL based on some user specific criteria. 
+1. This tool provides Tkinter based GUI to process and curate the .csv data downloaded from ChEMBL based on some user specific criteria. 
 2. It includes a column at the end of the processed file as 'Active' that contained binary values (1 or 0) based on the activity cut-off value specified by the user.
 3. It also download a file where the user mnay check which data-points are duplicates and have large variations in the reported activity values. The user may decide whther to keep these data-points or not.
 # Requirements
