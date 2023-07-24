@@ -4,6 +4,7 @@
 3. It also download a file where the user mnay check which data-points are duplicates and have large variations in the reported activity values. The user may decide whther to keep these data-points or not.
 # Requirements
 Anaconda
+
 Rdkit
 
 Anaconda may be downloaded from https://www.anaconda.com/
