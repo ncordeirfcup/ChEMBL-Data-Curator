@@ -47,6 +47,15 @@ def smitosmi(smi):
     remover = SaltRemover.SaltRemover();
     m = remover.StripMol(mol)
     canSmi= Chem.MolToSmiles(m)
+    if len(canSmi.split('.'))>1:
+       f=len(canSmi.split('.')[0])
+       l=len(canSmi.split('.')[1])
+       if f>l:
+          canSmi=canSmi.split('.')[0]
+       else:
+          canSmi=canSmi.split('.')[1]
+    elif len(canSmi.split('.'))==1:
+         pass
     return canSmi
 
 
@@ -70,6 +79,8 @@ def file_process():
          df3=df2[df2['BAO Label']=='assay format']
     elif bao=='all':
          df3=df2
+    if df3.shape[0]==0:
+       messagebox.showinfo('# Error: ',"No such BAO Label is present"+"\n")
 
     at=Criterion3.get()
     if at=='asB':
@@ -80,6 +91,10 @@ def file_process():
        df4=df3[df3['Assay Type']=='A']
     elif at=='asA':
          df4=df3
+    print('df4 shape is {}'.format(df4.shape))
+    if df4.shape[0]==0:
+       messagebox.showinfo('# Error: ',"No such assay type is present"+"\n")
+    
 
     ro=Criterion5.get()
     if ro=='ro0':
@@ -149,11 +164,15 @@ def file_process():
     ct4=ct2[ct2['DUPLICATE']=='Not Duplicate']
     #ct4.to_csv('Not_DUPLICATE.csv', index=False)
     ls7=[]
-    print(ls6)
+    #print(ls6)
     for i in set(ls6):
         ls7.append(ct2[ct2['Canonical SMILES'].isin([i])].iloc[0:1,:])
         ndd=pd.concat(ls7, axis=0)
-    fd=pd.concat([ndd,ct4], axis=0)
+    print('ls7 len is {}'.format(len(ls7)))
+    if len(ls7)>0:
+       fd=pd.concat([ndd,ct4], axis=0)
+    else:
+       fd=ct4
     try:
        fd.to_csv(str(c_)+'_Processed.csv', index=False)
        #messagebox.showinfo('# Relax: ',"Final files are saved."+"\n")
@@ -192,7 +211,7 @@ Criterion3.set('asA')
 Criterion_b = ttk.Radiobutton(tab1, text='B', variable=Criterion3, value='asB')
 Criterion_f = ttk.Radiobutton(tab1, text='F', variable=Criterion3, value='asF')
 Criterion_a1 = ttk.Radiobutton(tab1, text='A', variable=Criterion3, value='asA1')
-Criterion_a = ttk.Radiobutton(tab1, text='Both', variable=Criterion3, value='asA')
+Criterion_a = ttk.Radiobutton(tab1, text='All', variable=Criterion3, value='asA')
 Criterion_Label3.place(x=50,y=150)
 Criterion_b.place(x=150,y=150)
 Criterion_f.place(x=200,y=150)
@@ -225,7 +244,7 @@ Criterion_ro1.place(x=300,y=250)
 Criterion_ro2.place(x=350,y=250)
 Criterion_roN.place(x=400,y=250)
 
-b2=Button(tab1, text='Generate model', command=file_process,bg="green",font=("Helvetica", 10),anchor=W, justify=LEFT)
+b2=Button(tab1, text='Generate datasets', command=file_process,bg="green",font=("Helvetica", 10),anchor=W, justify=LEFT)
 b2.place(x=310,y=300)
 
 tab_parent.pack(expand=1, fill='both')
