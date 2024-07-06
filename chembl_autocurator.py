@@ -66,9 +66,21 @@ def file_process():
     df1_1=df[(df['Standard Relation']!='NA')]
     df1=df1_1[(df1_1['Standard Value']!='NA')]
     df2=df1[(df1['Standard Value']>0)]
-    df2.to_csv('df2.csv')
+    #df2.to_csv('df2.csv')
     df2=df2[df2['Smiles']!='NA']
     df2['Canonical SMILES']=df2.apply(lambda x:smitosmi(x['Smiles']),axis=1)
+    x=df2['Standard Units'].unique().tolist()
+    if 'ug.mL-1' in x:
+       dfu=df2[df2['Standard Units']=='ug.mL-1']
+       dfn=df2[df2['Standard Units']=='nM']
+       dfu['Standard Value']=dfu.apply(lambda x: (x['Standard Value']/x['Molecular Weight'])*1000*1000, axis=1)
+       dfu['Standard Units']='nM (converted from ug.mL-1)'
+       df2=pd.concat([dfn,dfu], axis=0)
+    else:
+       df2_1=df2[df2['Standard Units']=='nM']
+       df2=df2_1
+       
+       
     df2.to_csv('df2.csv', index=False)
     bao=Criterion4.get()
     if bao=='single protein format':
@@ -105,7 +117,7 @@ def file_process():
          df5=df4[(df4['#RO5 Violations']=='0') | (df4['#RO5 Violations']=='1') | (df4['#RO5 Violations']=='2')]
     elif ro=='roN':
          df5=df4
-    df5.to_csv('df5.csv', index=False)
+    #df5.to_csv('df5.csv', index=False)
     cut=int(N1B1_t1.get())
     #print(df.shape,df1.shape,df2.shape,df3.shape, df4.shape,df5.shape)
     df6=df5[df5['Standard Relation']!='NA']
